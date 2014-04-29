@@ -1,0 +1,195 @@
+\documentclass[12pt]{article}
+\usepackage{geometry}
+\geometry{
+ a4paper,
+ total={210mm,297mm},
+ left=40mm,
+ right=20mm,
+ top=35mm,
+ bottom=35mm, }
+
+
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{graphicx}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{amsmath}
+\usepackage{bbold}
+
+
+\title{Theoretical Pyhsics VI :  Nonlinear Dynamics and Chaos, \\ Exercise 01}
+\author{\c{S}eyma Bayrak \thanks{seyma.bayrak@st.ovgu.de}, Inia Steinbach \thanks{IniaSteinbach@gmx.net}, Maximilian Eisbach \thanks{maxeisbach@fhi-berlin.mpg.de}, Anne-Kathleen Malchow \thanks{anne-kathleen.malchow@gmx.de}}
+ 
+\date{\today}
+\begin{document}
+   \maketitle
+   
+
+	\section{Lotka-Volterra Model}	
+
+\subsection{Biological Interpretation}
+
+The Lotka-Volterra model describes the growth change in two different but interacting biological populations. One can imagine one population as the predator and the other one as the prey species in an ecosystem. The growth rate of each population is modelled with first order differential equation as in the following:
+
+\begin{subequations}
+ \begin{align}\dot{S} = rS - \alpha SM \label{eqn: frobenius 1}\\  \dot{M} = -qM + \beta SM \label{eqn: frobenius 2} 
+ \end{align} 
+\end{subequations}
+
+Equation (1a) presents the growth rate of sheeps ($S$) and equation (1b) is that of Mexican wolf ($M$) in a mountainous ecosystem. The natural growth rate of sheeps is shown by parameter $r$, whereas the natural growth rate of Mexican wolfs is by $q$ (actually it becomes the death rate with $-q$). The prey-predator interaction is implemented with $\alpha$, which is the death rate of sheeps due to Mexican wolf attack, and $\beta$, which is the growth of Mexican wolf population with a sheep hunting.
+
+\newpage
+
+\subsection{Stability Analysis}
+
+Let us first find the fixed points:
+
+\begin{equation*}
+\dot{S} = 0 \longrightarrow rS - \alpha SM = 0 \longrightarrow S =0, \;\; M=\frac{r}{\alpha} 
+\end{equation*}
+
+\begin{equation*}
+\dot{M} = 0 \longrightarrow -qM + \beta SM = 0 \longrightarrow M =0, \;\; S=\frac{q}{\beta} 
+\end{equation*}
+
+The fixed points are found as $(S,M)=(0,0)$ and $(S,M)=(\frac{q}{\beta} ,\frac{r}{\alpha})$. Now the Jacobian matrix needs to be calculated at those fix points to interpret the stability of system at those points. 
+
+\[
+J=
+\left[ {\begin{array}{cc }
+r- \alpha M   &  -\alpha S \\
+\beta M &  -q + \beta S  \\
+
+\end{array} } \right]
+\]
+
+\begin{itemize}
+\item[•] Stability analysis at fixed point $(S,M)=(0,0)$ :
+
+\[
+det(A -     \mathbb{I} \lambda )= 
+\left| {\begin{array}{cc }
+r- \lambda   &  0 \\
+0 &  -q-\lambda  \\
+
+\end{array} } \right|
+\] 
+
+\begin{equation*}
+det(A -     \mathbb{I} \lambda ) = \lambda^{2} - \lambda (q-r) - rq = 0 
+\end{equation*}
+
+
+\begin{equation*}
+ \longrightarrow \lambda_1 = \frac{-q+r+q+r}{2} = r, \;\;\; \lambda_2 = \frac{-q+r-q-r}{2} = -q
+\end{equation*}
+
+We are given $r>0$, $q>0$, $\alpha > 0$, and $\beta > 0$, therefore $\lambda_1 > 0 $ and $\lambda_2 <0$, we have a saddle point at $(S,M)=(0,0)$. Stability analysis holds, the condition of saddle point is $det(A)<0$, and that is satisfied since $det(A)=-rq$.
+
+\item[•] Stability analysis at fixed point $(\frac{q}{\beta} ,\frac{r}{\alpha})$:
+
+\[
+det(A -     \mathbb{I} \lambda )= 
+\left| {\begin{array}{cc }
+-\lambda   &  - \frac{\alpha q}{\beta} \\
+\frac{ \beta r}{\alpha} &  -\lambda  \\
+
+\end{array} } \right|
+\] 
+
+\begin{equation*}
+det(A -     \mathbb{I} \lambda ) = \lambda^{2} + rq = 0 
+\end{equation*}
+
+\begin{equation*}
+ \longrightarrow \lambda_1 = \sqrt{rq}, \;\;\; \lambda_2 = -\sqrt{rq}
+\end{equation*}
+
+$\lambda_1 > 0$ and $\lambda_2 < 0$, the system seems to be saddle at $(\frac{q}{\beta} ,\frac{r}{\alpha})$, however stability analysis does not hold here, since $det(A)=qr>0$, the condition for the saddle point does not hold. 
+
+\end{itemize}
+
+\subsection{Constant of Motion}
+
+The function $c(S,M)$ is introduces as the constant of motion. It can be derived as the separation of variable.
+
+
+\begin{equation*}
+\frac{dS}{dt} = rS - \alpha SM  \;\;\;  and \;\;\;  \frac{dM}{dt} = -qM + \beta SM  
+\end{equation*}   
+
+Now, let us multiply both sides of equations with $\frac{1}{SM}$ and the time derivative of the other variable:
+
+\begin{subequations}
+ \begin{align}\frac{1}{SM} \frac{dS}{dt} \frac{dM}{dt} = \frac{dM}{dt} (\frac{r}{M} - \alpha) \label{eqn: frobenius 1}\\  \frac{1}{SM} \frac{dM}{dt} \frac{dS}{dt} =\frac{dS}{dt}( -\frac{q}{S} + \beta) \label{eqn: frobenius 2} 
+ \end{align} 
+\end{subequations}
+
+Subtracting equation (2a) and (2b) gives the following:
+
+\begin{equation}
+\frac{dM}{dt} (\frac{r}{M} - \alpha) +\frac{dS}{dt}( \frac{q}{S} - \beta) = 0
+\end{equation}
+
+The constant motion means that $\frac{d (c(S,M))}{dt} =0 $, we can rewrite it by the separation of variables;
+
+\begin{equation}
+\frac{d c(S,M)}{dt} = \frac{dM}{dt} \frac{\partial c(S,M)}{\partial M} + \frac{dS}{dt} \frac{\partial c(S,M)}{\partial S} = 0
+\end{equation}
+
+This implies that;
+
+\begin{equation*}
+\frac{\partial c(S,M)}{\partial M} = \frac{r}{M} - \alpha \longrightarrow c(S,M) = \int (\frac{r}{M} - \alpha) \partial M = r \ln M - \alpha M + \zeta
+\end{equation*}
+
+\begin{equation*}
+\frac{\partial c(S,M)}{\partial S} = \frac{q}{S} - \beta \longrightarrow c(S,M) = \int (\frac{q}{S} - \beta) \partial S = q \ln S - \beta S + \varrho
+\end{equation*}
+where $\zeta$ and $\varrho$ are some constants of integration. We should find a unique solution to our function $c(S,M)$ by combining two possible definitions above.
+
+\begin{equation}
+c(S,M) = r \ln M + q \ln S -\alpha M - \beta S  + \zeta +\varrho 
+\end{equation}
+
+It is given that the function $c(S,M)$ must be equal to a constant value, so we can squeze all the constants into its actual equivalent value, $c_0$;
+
+\begin{equation}
+c(S,M) = r \ln M + q \ln S -\alpha M - \beta S   = c_0
+\end{equation}
+
+\subsection{Lotka-Volterra Model in Phase Space}
+
+This section presents the Lotka-Volterra model dynamisc on phase space. The differential equations given in (1a) and (1b) are solved with \textit{scipy.integrate} package of \textit{Python}. 
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.9\textwidth, height=9cm]{lotka_volterra_time.eps}
+		\caption{Time evolution of $S(t)$ and $M(t)$. When the Mexican wolf population increases, sheep population starts decreasing. $S(t)$ and $M(t)$ seem to be oscillatory together. The parameters are the following: $r=0.1$, $q=0.5$, $\alpha=\beta=0.01$.}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.9\textwidth, height=9cm]{lotka_volterra_phase_space.eps}
+		\caption{The behavior of $S$ and $M$ together in phase space with different initial conditions, arrows representing the trajectories. Two fixed points are indicated with black dots, $FP(0,0)$ and $FP(50,0)$.}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=1\textwidth, height=13cm]{lotka_volterra_nullclines.eps}
+		\caption{Nullclines: $S=\frac{q}{\beta}$ and $M=\frac{r}{\alpha}$, constant of motion along the contours for three different $c_0$ values: $-1.3$, $-1.4$, and $-1.5$. Note that the fixed point $FP(50,10)$ lies exactly on the intersection of the nullclines.}
+\end{figure}
+
+\subsection{Additional Parameters in Lotka-Volterra Model}
+
+We assume now an insecticide in the ecosystem and it is reflected in our model as the following;
+
+\begin{subequations}
+ \begin{align}\dot{S} = rS - \alpha SM  -kS\label{eqn: frobenius 1}\\  \dot{M} = -qM + \beta SM -kM \label{eqn: frobenius 2} 
+ \end{align} 
+\end{subequations}
+
+where $k>0$. 
+
+
+\end{document}
