@@ -14,10 +14,10 @@
 \usepackage{graphicx}
 \usepackage[font=small,labelfont=bf]{caption}
 \usepackage{amsmath}
-\usepackage{bbold}
+%\usepackage{bbold}
 
 
-\title{Theoretical Pyhsics VI :  Nonlinear Dynamics and Chaos, \\ Exercise 01}
+\title{Theoretical Physics VI :  Nonlinear Dynamics and Chaos, \\ Exercise 01}
 \author{\c{S}eyma Bayrak \thanks{seyma.bayrak@st.ovgu.de}, Inia Steinbach \thanks{IniaSteinbach@gmx.net}, Maximilian Eisbach \thanks{maxeisbach@fhi-berlin.mpg.de}, Anne-Kathleen Malchow \thanks{anne-kathleen.malchow@gmx.de}}
  
 \date{\today}
@@ -29,7 +29,7 @@
 
 \subsection{Biological Interpretation}
 
-The Lotka-Volterra model describes the growth change in two different but interacting biological populations. One can imagine one population as the predator and the other one as the prey species in an ecosystem. The growth rate of each population is modelled with first order differential equation as in the following:
+The Lotka-Volterra model describes the growth change in two different but interacting biological populations. One can imagine one population as the predator and the other one as the prey species in an ecosystem. The growth rate of each population is modeled with first order differential equation as in the following:
 
 \begin{subequations}
  \begin{align}\dot{S} = rS - \alpha SM \label{eqn: frobenius 1}\\  \dot{M} = -qM + \beta SM \label{eqn: frobenius 2} 
@@ -67,7 +67,7 @@ r- \alpha M   &  -\alpha S \\
 \item[•] Stability analysis at fixed point $(S,M)=(0,0)$ :
 
 \[
-det(A -     \mathbb{I} \lambda )= 
+det(A -     I \lambda )= 
 \left| {\begin{array}{cc }
 r- \lambda   &  0 \\
 0 &  -q-\lambda  \\
@@ -75,8 +75,11 @@ r- \lambda   &  0 \\
 \end{array} } \right|
 \] 
 
+where $I$ is identity matrix
+
+
 \begin{equation*}
-det(A -     \mathbb{I} \lambda ) = \lambda^{2} - \lambda (q-r) - rq = 0 
+det(A -     I \lambda ) = \lambda^{2} - \lambda (q-r) - rq = 0 
 \end{equation*}
 
 
@@ -88,8 +91,9 @@ We are given $r>0$, $q>0$, $\alpha > 0$, and $\beta > 0$, therefore $\lambda_1 >
 
 \item[•] Stability analysis at fixed point $(\frac{q}{\beta} ,\frac{r}{\alpha})$:
 
+
 \[
-det(A -     \mathbb{I} \lambda )= 
+det(A -     I \lambda )= 
 \left| {\begin{array}{cc }
 -\lambda   &  - \frac{\alpha q}{\beta} \\
 \frac{ \beta r}{\alpha} &  -\lambda  \\
@@ -98,7 +102,7 @@ det(A -     \mathbb{I} \lambda )=
 \] 
 
 \begin{equation*}
-det(A -     \mathbb{I} \lambda ) = \lambda^{2} + rq = 0 
+det(A -     I \lambda ) = \lambda^{2} + rq = 0 
 \end{equation*}
 
 \begin{equation*}
@@ -108,6 +112,7 @@ det(A -     \mathbb{I} \lambda ) = \lambda^{2} + rq = 0
 $\lambda_1 > 0$ and $\lambda_2 < 0$, the system seems to be saddle at $(\frac{q}{\beta} ,\frac{r}{\alpha})$, however stability analysis does not hold here, since $det(A)=qr>0$, the condition for the saddle point does not hold. 
 
 \end{itemize}
+
 
 \subsection{Constant of Motion}
 
@@ -124,6 +129,8 @@ Now, let us multiply both sides of equations with $\frac{1}{SM}$ and the time de
  \begin{align}\frac{1}{SM} \frac{dS}{dt} \frac{dM}{dt} = \frac{dM}{dt} (\frac{r}{M} - \alpha) \label{eqn: frobenius 1}\\  \frac{1}{SM} \frac{dM}{dt} \frac{dS}{dt} =\frac{dS}{dt}( -\frac{q}{S} + \beta) \label{eqn: frobenius 2} 
  \end{align} 
 \end{subequations}
+
+
 
 Subtracting equation (2a) and (2b) gives the following:
 
@@ -143,6 +150,7 @@ This implies that;
 \frac{\partial c(S,M)}{\partial M} = \frac{r}{M} - \alpha \longrightarrow c(S,M) = \int (\frac{r}{M} - \alpha) \partial M = r \ln M - \alpha M + \zeta
 \end{equation*}
 
+
 \begin{equation*}
 \frac{\partial c(S,M)}{\partial S} = \frac{q}{S} - \beta \longrightarrow c(S,M) = \int (\frac{q}{S} - \beta) \partial S = q \ln S - \beta S + \varrho
 \end{equation*}
@@ -152,15 +160,16 @@ where $\zeta$ and $\varrho$ are some constants of integration. We should find a 
 c(S,M) = r \ln M + q \ln S -\alpha M - \beta S  + \zeta +\varrho 
 \end{equation}
 
-It is given that the function $c(S,M)$ must be equal to a constant value, so we can squeze all the constants into its actual equivalent value, $c_0$;
+It is given that the function $c(S,M)$ must be equal to a constant value, so we can squeeze all the constants into its actual equivalent value, $c_0$;
 
 \begin{equation}
 c(S,M) = r \ln M + q \ln S -\alpha M - \beta S   = c_0
 \end{equation}
 
+
 \subsection{Lotka-Volterra Model in Phase Space}
 
-This section presents the Lotka-Volterra model dynamisc on phase space. The differential equations given in (1a) and (1b) are solved with \textit{scipy.integrate} package of \textit{Python}. 
+This section presents the Lotka-Volterra model dynamics on phase space. The differential equations given in (1a) and (1b) are solved with \textit{scipy.integrate} package of \textit{Python}. 
 
 \begin{figure}[h!]
 	\centering
@@ -185,11 +194,111 @@ This section presents the Lotka-Volterra model dynamisc on phase space. The diff
 We assume now an insecticide in the ecosystem and it is reflected in our model as the following;
 
 \begin{subequations}
- \begin{align}\dot{S} = rS - \alpha SM  -kS\label{eqn: frobenius 1}\\  \dot{M} = -qM + \beta SM -kM \label{eqn: frobenius 2} 
+ \begin{align}\dot{S} = rS - \alpha SM  -kS \label{eqn: frobenius 1}\\  \dot{M} = -qM + \beta SM -kM \label{eqn: frobenius 2} 
  \end{align} 
 \end{subequations}
 
-where $k>0$. 
+where $k>0$. The new fixed points are found as the following,
+
+\begin{subequations}
+ \begin{align} rS - \alpha SM  -kS = 0 \longrightarrow SM = \frac{r-s}{\alpha} S
+  \label{eqn: frobenius 1}\\  -qM + \beta SM -kM  = 0 \longrightarrow SM = \frac{q+k}{\beta} M
+   \label{eqn: frobenius 2} 
+ \end{align} 
+\end{subequations}
+
+Equations (8a) and (8b) are equal,
+\begin{equation}
+ SM = \frac{r-s}{\alpha} S = \frac{q+k}{\beta} M , \;\;\; FP(0, 0) \;\;\; and \;\;\; FP(\frac{q+k}{\beta} , \frac{r-k}{\alpha})
+\end{equation}
+
+Before the insecticide, the fixed points were $FP(0, 0)$ and $FP(\frac{q}{\beta} , \frac{r}{\alpha})$, after insecticide $FP(0,0)$ stays the same but the second fixed point shifts by $\frac{k}{\beta}$ along the $S$ direction, and by $-\frac{k}{\alpha}$ along the $M$ direction. Since $r>k$, $\frac{r-k}{\alpha}$ is positive. 
+
+
+
+\section{Van der Pol Oscillator}
+
+\begin{equation}
+\ddot{x}+ \mu (x^2 -a) \dot{x} +w_0^2x = 0 \;\;\;\;\;\;\;\;\; (\mu \geq 0)
+\end{equation}
+
+\subsection{Linearization and Fixed Points}
+
+\begin{equation}
+y =\dot{x} \;\;\;\;\;\;\;\;\; \;\;\;\;\;\;\;\;\; \dot{y} = -\mu (x^2 -a) y -w_0^2x 
+\end{equation}
+
+We first do a substitution, $x = \frac{x}{\sqrt{a}}$, $y=\frac{y}{a}$ and $\mu = \frac{\mu}{a}$. We let $w_0 = 1$ for simplicity. For the condition $\mu \ll 1$, let us convert $x$ and $y$ into polar coordinates,
+
+\begin{equation*}
+x = r cos(t)\;\;\;\;\;\;\;\;\; \;\;\;\;\;\;\;\;\; y=rsin(t)
+\end{equation*}
+\begin{equation*}
+\frac{d}{dt} (x^2 + y^2) = 2(x\dot{x} + y\dot{y})= -2 \mu (x^2 -1) y^2 = -2 \mu r^2 (r^2 cos^2(t) -1 ) sin^2(t) 
+\end{equation*}
+
+Once integrated, the period of limit cycle over time must be equal to 0. 
+
+\begin{equation*}
+\int_0^{2 \pi} dt \frac{d}{dt} (x^2 + y^2) = \int_0^{2 \pi} dt (-2 \mu r^2 (r^2 cos^2(t) -1 ) sin^2(t) ) 
+\end{equation*}
+\begin{equation*}
+=- \frac{\pi}{2} r^2 (r^2-4) =0
+\end{equation*}
+
+The back-substitution gives that $- \frac{\pi}{2} \frac{r}{\sqrt{a}} (\frac{r}{\sqrt{a}}-4) =0$, So $r=0$ and $r = 2\sqrt{a}$ are the solutions. The nullclines intersect at $(x,y)=(0,0)$ and the radius of the limit cycle is $r=2$, if $a =1$.
+
+For the condition $M \gg 1$, we cannot use polar coordinate transformation anymore. Our linearization routine is the following, $y=\dot{x}$ and (Strogatz, \textit{Nonlinear Dynamics and Chaos}),
+
+\begin{equation*}
+\ddot{x}+ \mu (x^2 -a) \dot{x} = \frac{d}{dt} (\dot{x} + \mu (\frac{1}{3} x^3 -x))
+\end{equation*}
+If we let
+\begin{equation}
+F(x) = \frac{1}{3} x^3 -x \;\;\;\;\;\;\;\;\; \;\;\;\;\;\;\;\;\; w = \dot{x} + \mu F(x)
+\end{equation}
+\begin{equation}
+\dot{w} = \ddot{x} +\mu\dot{x} (x^2 -1) = -x 
+\end{equation}
+Equations (12) and (13) can be rewritten as
+\begin{equation*}
+\dot{x} = w - \mu F(x) \;\;\;\;\;\;\;\;\; \;\;\;\;\;\;\;\;\; \dot{w} = -x
+\end{equation*}
+Change of variable $y$ into 
+\begin{equation*}
+y= \frac{w}{y}
+\end{equation*}
+
+Our linearization takes the following form now,
+
+\begin{equation}
+\dot{x} = \mu (y - F(x)) \;\;\;\;\;\;\;\;\; \;\;\;\;\;\;\;\;\; and \;\;\;\;\;\;\;\;\; \;\;\;\;\;\;\;\;\; \dot{y} = - \frac{1}{\mu} x
+\end{equation}
+
+As equation (14) implies that, the change in variable $x$ is much faster than that of $y$, since $\mu \gg 1$. The velocity is enormous in the horizontal direction and tiny in the vertical direction (Strogatz,\textit{Nonlinear Dynamics and Chaos} )
+
+\subsection{Plots}
+
+We introduce the Van der Pol oscillator on the phase space with $\mu=1$, $w_0=1$. 
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=1\textwidth, height=13cm]{f1.png}
+		\caption{}
+\end{figure}
+
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=1\textwidth, height=10cm]{f2.png}
+		\caption{}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=1\textwidth, height=10cm]{f3.png}
+		\caption{}
+\end{figure}
 
 
 \end{document}
