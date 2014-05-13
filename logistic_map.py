@@ -5,10 +5,10 @@ import numpy as np
 import pylab as pl
 
 
-r_range = np.linspace(0,4,500)
+r_range = np.linspace(0,4,1000)
 
 N_pre = 400
-N = 10
+N = 300
 x = np.zeros(( N, 1 ))
 x_init = 0.5
 
