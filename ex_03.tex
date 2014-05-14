@@ -1,0 +1,178 @@
+\documentclass[12pt]{article}
+\usepackage{geometry}
+\geometry{
+ a4paper,
+ total={210mm,297mm},
+ left=40mm,
+ right=20mm,
+ top=35mm,
+ bottom=35mm, }
+
+
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{graphicx}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{amsmath}
+%\usepackage{bbold}
+
+
+\title{Theoretical Physics VI :  Nonlinear Dynamics and Chaos, \\ Exercise 03}
+\author{\c{S}eyma Bayrak \thanks{seyma.bayrak@st.ovgu.de}, Inia Steinbach \thanks{IniaSteinbach@gmx.net}, Maximilian Eisbach \thanks{maxeisbach@fhi-berlin.mpg.de}, Anne-Kathleen Malchow \thanks{anne-kathleen.malchow@gmx.de}}
+ 
+\date{13.Mai 2014}
+\begin{document}
+   \maketitle
+
+\section{Menger Sponge}
+   
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.9\textwidth, height=4cm]{Menger_Sponge.png}
+		\caption{Menger Sponge Visualization}
+\end{figure}   
+   
+\subsection{Volume and Surface }   
+
+\begin{center}
+  \begin{tabular}{ l | c | r }
+    
+    Iteration & Auszahl einzelne Würfel & Length of Dice \\ \hline
+    n=0 & $N_0$=27 & $L_0$=1 \\ \hline
+    n=1 & $N_1$=20 & $L_1$=$\frac{1}{3}$ \\ \hline
+    n=2 & $N_2$=20.20 & $L_2$=$\frac{1}{9}$ \\ \hline
+    n=3 & $N_3$=20.20.20 & $L_3$=$\frac{1}{27}$ \\ \hline
+     n=... & $N_{..}..$=20.20... & $L_3$=$\frac{1}{3.3...}$ \\ \hline
+    n=$n$ & $N_n$=$20^n$ & $L_n$=$\frac{1}{3^n}$ \\ 
+     \end{tabular}
+\end{center}
+
+\newpage
+
+The volume of the dices at each iteration is calculated with the help of $L$ and $N$;
+
+\begin{equation*}
+V_n = L_n^3 . N_n = \frac{1}{27^n}.20^n = (\frac{20}{27})^n
+\end{equation*}
+
+Let us calculate the outer surface, $F$ at each iteration.
+\begin{center}
+  \begin{tabular}{ l | c  }
+    
+    Iteration & Outer Surface \\ \hline
+    n=0 & $F_0$=6  \\ \hline
+    n=1 & $F_1 = (2.20 + 4.8) / 9$  \\ \hline
+    n=2 & $F_2 = (2.20.20 + 4.8.8) / (9.9)$ \\ \hline
+    n=3 & $F_3 = (2.20.20.20 + 4.8.8.8) / (9.9.9)$ \\ \hline
+    n=... & $F_{..} = (2.20.20... + 4.8.8...) / (9.9...)$ \\ 
+    n=$n$ & $F_n = \dfrac{2.20^n+4.8^n}{9^n}$ \\ 
+     \end{tabular}
+\end{center}
+
+For the large values of $n$,
+
+\begin{equation*}
+\lim_{n \to \infty} V_n = \lim_{n \to \infty} \left( \frac{20}{27}\right)^n =0  
+\end{equation*}
+\begin{equation*}
+\lim_{n \to \infty} F_n = \lim_{n \to \infty} \left(\frac{2.20^n+4.8^n}{9^n}\right) = \infty  
+\end{equation*}
+
+The volume goes to zero with very large $n$ values, whereas the outer surface converges to infinity.
+   
+\subsection{Hausdorff Dimension}   
+   
+Housdorff Dimension for the Menger Sponge is defined and calculated as the following,
+
+\begin{equation*}
+D = - \lim_{n \to \infty} \frac{\ln{N_n} }{\ln{L_n}} = \frac{\ln{20}}{\ln{3}} = 2,7268..
+\end{equation*}   
+
+$D$ of Menger Sponge is between 2 and 3 dimensional in terms of surface and volume.   
+
+\section{Logistic Map and Lyapunov Exponent}
+
+This section looks for the chaos conditions with a well known Logistic Map function.
+
+\begin{equation}
+x_{n+1}=f(x_n):= rx_n(1-x_n) \;\;\;\;\;\;\;\; (r \epsilon [0,4])
+\end{equation}
+
+For the numerical assignment, the logistic equation is pre-iterated for 400 times to get the first initial condition, then the iteration moved on 300 more times to calculate $x_n$.  The pre-iteration is done in order to catch up the transition in dynamical system. Lyapuvon Exponent is found also in the same way, the 2000 times iteration is done after a pre-iteration process for the initial conditions. We plot firstly the bifurcation diagram of $x_n$ depending on bifurcation parameter. 
+
+
+ \begin{figure}[h!]
+	\centering
+	\includegraphics[width=\textwidth, height=9cm]{logistic_bifu.png}
+		\caption{Bifuraction diagram of logistic map function. For each parameter $r$, $x_n$ is iterated 300 times. The inital point of $x_n$ is pre-iterated 400 times. }
+\end{figure}  
+   
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=\textwidth, height=9cm]{r_values.png}
+		\caption{Bifuraction diagram of logistic map function, only within $r=[2.5,3.7]$ range in order to see bifurcation branches better. The figure was zoomed in to catch exact $r$ values, then the red lines were plotted through all $r$s. From left to right :  $r_i$=[2.998, 3.449, 3.544, 3.564, 3,69], where $i$ is (1,2,3,4,5).  }
+\end{figure}  
+
+\subsection{Feigenbaum Constant}   
+
+The bifurcation diagrams shows the duplication of period for at certain bifurcation parameter values. At those bifurcation parameters system begins to have more than one fixed point. Even though first double orbit bifurcation parameters are distantly located from each other, later on, the $r$ values seem to be very close as seen in Figure 3. The Feigenbaum constant ($\delta$) expresses the closeness of bifurcation parameters causing double orbit period and it is accepted universally. 
+   
+\begin{equation}
+\delta_n = \dfrac{r_n - r_{n-1}}{r_{n+1}-r_n}
+\end{equation}   
+
+Let us calculate first three Feigenbaum constants of our logistic map with the values given in Figure 3.
+
+\begin{equation*}
+\delta_2 = \dfrac{r_2 - r_{1}}{r_{3}-r_2} = 4.747
+\end{equation*} 
+\begin{equation*}
+\delta_3 = \dfrac{r_3 - r_{2}}{r_{4}-r_3} = 4.750
+\end{equation*} 
+\begin{equation*}
+\delta_4 = \dfrac{r_4 - r_{3}}{r_{5}-r_4} = 4.000
+\end{equation*} 
+
+The universal value of Feigenbaum constant is given as $\delta =4.669$. Our $\delta$ values above are deviating around the universal constant successfully.
+
+ 
+\subsection{Lyapunov Exponent} 
+Lyapunov Exponent searches for the effect of the initial conditions of a dynamical system on its stability. It is defined as the following,
+
+\begin{equation}
+\lambda (f,x) = \lim_{n \to \inf} \frac{1}{n} log |(f^n)'(x)|
+\end{equation}
+
+where  $(f^n)' $ is derivative of the n$^{th}$ term.
+
+\begin{equation*}
+(f^n)'(x) = f'(x_{n-1})...f'(x_1).f'(x_0)
+\end{equation*}
+
+We can think about $x_n$ values as randomly chosen initial conditions. We can generalize the Lyapunov exponent as below,
+\begin{equation}
+\lambda (f,x) = \lim_{n \to \inf} \frac{1}{n} \sum_{k=0}^{n-1} log |(f^n)'(x)|
+\end{equation}
+Our logistic function has the definition of $f(x_n):= rx_n(1-x_n)$, therefore,
+
+ \begin{equation}
+\lambda (f,x) = \lim_{n \to \inf} \frac{1}{n} \sum_{k=0}^{n-1} log |r-2rx_n|
+\end{equation}
+
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.9\textwidth, height=7.5cm]{lyapuno.png}
+		\caption{Lyapunov exponent diagram depending on bifurcation parameter $r$. To compare it better with $x_n$ in Figure 2, we plot the $\lambda$ range in [-1,1]. }
+\end{figure}  
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.9\textwidth, height=8cm]{xn_and_lambda.png}
+		\caption{Lyapunov exponent and bifurcation diagram on the same figure. The dashed line represents where the limit 0 for $\lambda$ }
+\end{figure} 
+\newpage
+Whenever the Lyapunov exponent gets positive, the dynamical system goes into chaos. At $r=3.569$, the period doubling case ends. When $\lambda$ is positive, the system gets more sensitive on initial conditions into the chaos. It is also obvious that whenever the logistic map has period duplication (at the bifurcation points), $\lambda$ equals to $0$. The curve of Lyapunov Exponent increases towards zero and suddenly falls back to negative values until the chaos is observed. 
+   
+\end{document}
+
