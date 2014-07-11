@@ -11,7 +11,7 @@ from networkx.generators.classic import empty_graph, path_graph, complete_graph
 
 import matplotlib.pyplot as pl
 # N : number of nodes
-# k : number of nearest neighbots of any node
+# k : number of nearest neighbors of any node
 # p : probability of rewiring each edge
 # seed : seed for random number generation
 
@@ -25,9 +25,6 @@ def ring_graph(N , k, seed=None):
 	G_ring = nx.Graph()
 	
 	Nodes = list(range(N)) 
-	
-	#if k %2 != 0 : 
-		#k = (k - 1)
 		
 	for node_i in range(0, k/2 ):
 
@@ -53,7 +50,7 @@ def ring_graph(N , k, seed=None):
 	return G_ring	
 	
 
-def random_graph(G , p ) :
+def rewiring_edges(G , p ) :
 	
 	Nodes = G.nodes()
 	N     = G.number_of_nodes()
@@ -64,7 +61,7 @@ def random_graph(G , p ) :
 	
 	ave_degree = float(sum(values)/float(N))	
 	
-	print "average degree of graph: " , ave_degree	
+	#print "average degree of ring graph: " , ave_degree	
 			
 	for i in range(0, int(ave_degree)/2): 
 		available_nodes = Nodes[i+1:] + Nodes[0:i+1] 
@@ -91,24 +88,64 @@ def random_graph(G , p ) :
 					
 	return G
 	
-
+def rewiring_edges_connected(G, p, tries=100):
+	# repeating rewiring_edges function until it returns connected Graph
+	G = rewiring_edges(G, p)	
+	count = 1
+	while not nx.is_connected(G):
+		G = rewiring_edges(G, p)
+		count = count + 1
+		if count > tries:
+			raise nx.NetworkXError('cannot generate connected graph')
+	return G
+	
 def plot_graph(G):
 	pos = nx.shell_layout(G)
 	nx.draw(G, pos)
 	pl.show()
 
+def clustering_ring(k):
+	# calculates the clustering coefficient of ring lattice
+	# k : number of nearest neighbors of any node in ring graph
+	cc = (3*k-3)/float(4*k-2)
+	return cc
 
+def clustering_rewiring(k , p):
+	# calculates the clustering coefficient of rewired graph
+	# k : number of nearest neighbors of any node in ring graph
+	cc = (3*k-3) * pow((1-p),3) /float(4*k-2)
+	return cc
 	
-G_1 = ring_graph(10, 2, seed=None)
-G_2 = random_graph(G_1 ,  0.8)
+N = 10
+k = 2
+p = 0.1
+G_1 = ring_graph(N, k, seed=None)
+cc_ring = clustering_ring(k)
+print "clustering coefficient of ring graph is : " , cc_ring
 
-G_numerical =  nx.watts_strogatz_graph(10 , 2 , 0.8 , seed=None)
+G_2 = rewiring_edges(G_1, p)
+cc_rewired = clustering_rewiring(k,p)
+print "clustering coefficient of rewired graph is : " , cc_rewired
+
+G_3 = rewiring_edges_connected(G_1, p , tries=100)
+cc_con = clustering_rewiring(k,p)
+print "clustering coefficient of rewired connected graph is : " , cc_con
+
+#plot_graph(G_1)
+#plot_graph(G_2)
+plot_graph(G_3)
+
+
+
+
+#G_numerical =  nx.watts_strogatz_graph(10 , 2 , p=1 , seed=None)
+
 
 #plot_graph(G_numerical)
 
-G = nx.path_graph(5)
-length = nx.single_source_shortest_path_length(G, source =1)
-print "d_{ij} for i = 1 : ", length  
-plot_graph(G)
+#G = nx.path_graph(5)
+#length = nx.single_source_shortest_path_length(G, source =1)
+#print "d_{ij} for i = 1 : ", length  
+##plot_graph(G)
 
 
