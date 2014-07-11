@@ -113,34 +113,56 @@ def clustering_ring(k):
 def clustering_rewiring(k , p):
 	# calculates the clustering coefficient of rewired graph
 	# k : number of nearest neighbors of any node in ring graph
-	cc = (3*k-3) * pow((1-p),3) /float(4*k-2)
-	return cc
 	
-N = 10
-k = 2
-p = 0.1
-G_1 = ring_graph(N, k, seed=None)
-cc_ring = clustering_ring(k)
-print "clustering coefficient of ring graph is : " , cc_ring
+	#cc = float(3*k-3) * pow((1-p),3) /float(4*k-2) ## Barrat & Weigt
+	cc = (3*k-3) / float( 4*k-2 + 4*k*p*(p+2)  )    ## Newman
+	return cc
 
-G_2 = rewiring_edges(G_1, p)
-cc_rewired = clustering_rewiring(k,p)
-print "clustering coefficient of rewired graph is : " , cc_rewired
+#print "YES : ", clustering_rewiring(k=2 , p =0.5)
+	
+#N = 10
+#k = 2
+#p = 0.1
+#G_1 = ring_graph(N, k, seed=None)
+#cc_ring = clustering_ring(k)
+#print "clustering coefficient of ring graph is : " , cc_ring
 
-G_3 = rewiring_edges_connected(G_1, p , tries=100)
-cc_con = clustering_rewiring(k,p)
-print "clustering coefficient of rewired connected graph is : " , cc_con
+#G_2 = rewiring_edges(G_1, p)
+#cc_rewired = clustering_rewiring(k,p)
+#print "clustering coefficient of rewired graph is : " , cc_rewired
 
+#G_3 = rewiring_edges_connected(G_1, p , tries=100)
+#cc_con = clustering_rewiring(k,p)
+#print "clustering coefficient of rewired connected graph is : " , cc_con
+
+k 		 = 90
+C 		 = []
+C_max	 = []
+p_values = np.arange(0,1.0001,0.0001)
+
+for p in p_values:
+	cc_ring    = clustering_ring(k)
+	cc_rewired = clustering_rewiring(k,p)
+	C_max	   = np.append(C_max , clustering_ring(k))
+	C	 	   = np.append(C , clustering_rewiring(k,p))
+
+C_to_plot = C/ C_max 
+
+fig = pl.figure()
+ax  = fig.add_subplot(1,1,1)
+ax.set_xscale('log')
+pl.plot(p_values , C_to_plot)
+pl.ylim( 0 ,1 )
+pl.xlim( ax.get_xlim() )
+pl.show()
 #plot_graph(G_1)
 #plot_graph(G_2)
-plot_graph(G_3)
+#plot_graph(G_3)
 
 
 
 
 #G_numerical =  nx.watts_strogatz_graph(10 , 2 , p=1 , seed=None)
-
-
 #plot_graph(G_numerical)
 
 #G = nx.path_graph(5)
