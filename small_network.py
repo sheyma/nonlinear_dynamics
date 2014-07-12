@@ -67,19 +67,20 @@ def rewiring_edges(G , p ) :
 		available_nodes = Nodes[i+1:] + Nodes[0:i+1] 
         
         for node_j, node_k in zip(Nodes,available_nodes):
-			if random.random() < p:
-				node_X = random.choice(Nodes)
-				
-				# avoid the choice of node_j or already connected node_X
-				while node_X == node_j or G.has_edge(node_j, node_X):
+			if G.has_edge(node_j ,node_k):
+				if random.random() < p:
 					node_X = random.choice(Nodes)
-					if G.degree(node_j) >= N-1:
-						break
-				# swapping edges between paired nodes (rewiring) 		 
-				else:
-					G.remove_edge(node_j,node_k)
-					G.add_edge(node_j,node_X)
 					
+					# avoid the choice of node_j or already connected node_X
+					while node_X == node_j or G.has_edge(node_j, node_X):
+						node_X = random.choice(Nodes)
+						if G.degree(node_j) >= N-1:
+							break
+					# swapping edges between paired nodes (rewiring) 		 
+					else:
+						G.remove_edge(node_j,node_k)
+						G.add_edge(node_j,node_X)
+						
 	# ensuring no self loops and no multiple edges
 	for node_i in Nodes:
 		if G.has_edge(node_i , node_i):
@@ -88,7 +89,7 @@ def rewiring_edges(G , p ) :
 					
 	return G
 	
-def rewiring_edges_connected(G, p, tries=100):
+def rewiring_edges_connected(G, p, tries=1000):
 	# repeating rewiring_edges function until it returns connected Graph
 	G = rewiring_edges(G, p)	
 	count = 1
@@ -114,7 +115,7 @@ def clustering_rewiring(k , p):
 	# calculates the clustering coefficient of rewired graph
 	# k : number of nearest neighbors of any node in ring graph
 	
-	#cc = float(3*k-3) * pow((1-p),3) /float(4*k-2) ## Barrat & Weigt
+	# cc = float(3*k-3) * pow((1-p),3) /float(4*k-2) ## Barrat & Weigt
 	cc = (3*k-3) / float( 4*k-2 + 4*k*p*(p+2)  )    ## Newman
 	return cc
 
@@ -135,39 +136,96 @@ def clustering_rewiring(k , p):
 #cc_con = clustering_rewiring(k,p)
 #print "clustering coefficient of rewired connected graph is : " , cc_con
 
-k 		 = 90
-C 		 = []
-C_max	 = []
-p_values = np.arange(0,1.0001,0.0001)
 
-for p in p_values:
-	cc_ring    = clustering_ring(k)
-	cc_rewired = clustering_rewiring(k,p)
-	C_max	   = np.append(C_max , clustering_ring(k))
-	C	 	   = np.append(C , clustering_rewiring(k,p))
-
-C_to_plot = C/ C_max 
-
-fig = pl.figure()
-ax  = fig.add_subplot(1,1,1)
-ax.set_xscale('log')
-pl.plot(p_values , C_to_plot)
-pl.ylim( 0 ,1 )
-pl.xlim( ax.get_xlim() )
-pl.show()
 #plot_graph(G_1)
 #plot_graph(G_2)
 #plot_graph(G_3)
 
+N 		 = 10
+k 		 = 4
+C 		 = []
+C_max	 = []
+d_ave	 = []
+d_max	 = []
+p_values = np.arange(0,1.0001,0.0001)
+
+
+def get_single_network_measures(G):
+	N = nx.number_of_nodes(G)
+	L = nx.number_of_edges(G)
+	D = nx.density(G)
+	cc = nx.average_clustering(G)
+	compon = nx.number_connected_components(G)
+	Con_sub = nx.connected_component_subgraphs(G)
+
+	values = []
+	values_2 =[]
+
+	for node in G:
+		values.append(G.degree(node))
+	ave_deg = float(sum(values)) / float(N)
+	
+	for i in range(len(Con_sub)):
+		if nx.number_of_nodes(Con_sub[i])>1:
+			values_2.append(nx.average_shortest_path_length(Con_sub[i]))
+
+	if len(values_2)==0:
+		d = 0
+	else :
+		d = sum(values_2)/len(values_2)
+	
+	return d 
+
+for p in p_values:
+	C_max	   = np.append(C_max , clustering_ring(k))
+	C	 	   = np.append(C , clustering_rewiring(k,p))
+
+	G_ring   = ring_graph(N, k, seed=None)
+	d_temp   = get_single_network_measures(G_ring)
+	d_max	 = np.append(d_max , d_temp)
+	
+	G_rewired= rewiring_edges(G_ring , p)
+	d_tmp = get_single_network_measures(G_rewired)
+	d_ave = np.append(d_ave , d_tmp)
+	
+	
+	
+
+
+C_to_plot = C/ C_max 
+
+#fig = pl.figure()
+#ax  = fig.add_subplot(1,1,1)
+#ax.set_xscale('log')
+#pl.plot(p_values , C_to_plot)
+#pl.ylim( 0 ,1 )
+#pl.xlim( ax.get_xlim() )
+#pl.xlabel('p')
+#pl.ylabel('$C/C_{max}$')
+#pl.title('Clustering Coefficient Ration over Probability')
+#pl.show()
+
+D_to_plot = d_ave / d_max
+
+fig = pl.figure()
+ax  = fig.add_subplot(1,1,1)
+ax.set_xscale('log')
+pl.plot(p_values , D_to_plot)
+#pl.ylim( 0 ,1 )
+#pl.xlim( ax.get_xlim() )
+pl.show()
 
 
 
-#G_numerical =  nx.watts_strogatz_graph(10 , 2 , p=1 , seed=None)
+
+
+
+#G_numerical =  nx.watts_strogatz_graph(10 , 2 , p=0.5 , seed=None)
+#length_1 = nx.single_source_shortest_path_length(G_numerical, source =1)
+#length_2 = nx.average_shortest_path_length(G_numerical)
+#print "d_{ij}_1 for i = 1 : ", sum(length_1.values()) / float(len(length_1.values()))
+#print "d_{ij}_2 for i = 1 : ", length_2  
 #plot_graph(G_numerical)
 
-#G = nx.path_graph(5)
-#length = nx.single_source_shortest_path_length(G, source =1)
-#print "d_{ij} for i = 1 : ", length  
-##plot_graph(G)
 
 
