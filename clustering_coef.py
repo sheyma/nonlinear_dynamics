@@ -12,82 +12,53 @@ import matplotlib.pyplot as pl
 
 B = np.array([[0,1,1,1],[1,0,0,1],[1,0,0,1],[1,1,1,0]])
 G = nx.from_numpy_matrix(B)
-print "triangles : ", nx.triangles(G)
 
 N = nx.number_of_nodes(G)
-#ADJ = {'a':[]}
 ADJ = {}
-def _triangles_and_degree_iter(G,nodes=None):
-	if nodes is None:
-		
-		for i in G.nodes():
-			ADJ[i] = [] 
-			for j in G.nodes():
-				if G.has_edge(i , j):
-					ADJ[i].append(j)
-						
-		print ADJ
-		nodes_nbrs = G.adj.items()
-		
-		print (nodes_nbrs)
-		
+triads ={}
+
+def degree_node(G,node_i):
+	# connected neigbors of a given node 
+	# returns a list
+	ADJ[node_i] = []
+	for j in G.nodes():		
+		if G.has_edge(j,node_i):			
+			ADJ[node_i].append(j)
+	return ADJ[node_i]
+
+def triangle_node(G,nodes):
+	# number of triangles around a given node
+	# returns an integer	
+	
+	ADJ[nodes] = []
+	for j in G.nodes():
+		if G.has_edge(j,nodes):
+			ADJ[nodes].append(j) # list of neigbors	
+	
 	for node_i in ADJ:
-		 
+		triads[node_i] = []		 
 		adjacent_i= set(ADJ[node_i]) 
-		print adjacent_i
 		count_tri = 0
 		for node_j in adjacent_i:
-			print "benim set : ", node_j
+			new_set = set(G[node_j])-set([node_j])
+			count_tri +=len(adjacent_i.intersection(new_set))  		
+	return  int(count_tri/2)
 	
-	for v,v_nbrs in nodes_nbrs:
-		
-		
-		print "v : ", v
-		print "v_nbrs", v_nbrs
-		
-		
-		vs=set(v_nbrs)-set([v])
-		print vs
-		
-		ntriangles=0
-		for w in vs:
-			print "w is : ", w
-			
-			ws=set(G[w])-set([w])
-			ntriangles+=len(vs.intersection(ws))
-		#yield (v,len(vs),ntriangles)
-		#print (v,len(vs),ntriangles)
 
+def cluster_coef_numer(G):
+	# calculates average cluster coefficient of a graph
+	# Watts and Strogatz
+	clust_coef=0
+	N = nx.number_of_nodes(G)
+	for nodes in G:
+		k_i = len(degree_node(G,nodes))   # number of degrees
+		t_i = triangle_node(G,nodes)	  # number of triads	
+		clust_coef += 2 * float(t_i) /(k_i * (k_i - 1))
+	return clust_coef/float(N)
 
-_triangles_and_degree_iter(G, nodes = None)
-
-#def _triangles_and_degree_iter(G,nodes=None):
-    #""" Return an iterator of (node, degree, triangles).  
-
-    #This double counts triangles so you may want to divide by 2.
-    #See degree() and triangles() for definitions and details.
-
-    #"""
-	#if nodes is None:
-		#nodes_nbrs = G.adj.items()
-	#else:
-		#nodes_nbrs= ( (n,G[n]) for n in G.nbunch_iter(nodes) )
-		#print nodes_nbrs
-		
-    ##for v,v_nbrs in nodes_nbrs:
-        ##vs=set(v_nbrs)-set([v])
-        ##ntriangles=0
-        ##for w in vs:
-            ##ws=set(G[w])-set([w])
-            ##ntriangles+=len(vs.intersection(ws))
-        ##yield (v,len(vs),ntriangles)
+print nx.average_clustering(G)
+print cluster_coef_numer(G)
 
 
 
-
-def plot_graph(G):
-	pos = nx.shell_layout(G)
-	nx.draw(G, pos)
-	pl.show()
 	
-#plot_graph(G)
