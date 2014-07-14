@@ -119,6 +119,18 @@ def clustering_rewiring(k , p):
 	cc = (3*k-3) / float( 4*k-2 + 4*k*p*(p+2)  )    ## Newman
 	return cc
 
+def f(x):
+	A = float(1)/(2*(math.sqrt( pow(x,2) + 2*x ) ) )     
+	B = math.atanh( math.sqrt( float(x) / (x+2) ) )
+	return A*B
+
+def shortest_path(G , k, p):
+	L = nx.number_of_edges(G)
+	d_shortest = (float(L)/k) * f(L*k*p)
+	return d_shortest
+
+
+
 #print "YES : ", clustering_rewiring(k=2 , p =0.5)
 	
 #N = 10
@@ -141,55 +153,34 @@ def clustering_rewiring(k , p):
 #plot_graph(G_2)
 #plot_graph(G_3)
 
-N 		 = 10
-k 		 = 4
+N 		 = 100000
+k 		 = 10000
 C 		 = []
 C_max	 = []
 d_ave	 = []
 d_max	 = []
-p_values = np.arange(0,1.0001,0.0001)
+p_values = np.arange(0.0001,1.0001,0.0001)
 
-
-def get_single_network_measures(G):
-	N = nx.number_of_nodes(G)
-	L = nx.number_of_edges(G)
-	D = nx.density(G)
-	cc = nx.average_clustering(G)
-	compon = nx.number_connected_components(G)
-	Con_sub = nx.connected_component_subgraphs(G)
-
-	values = []
-	values_2 =[]
-
-	for node in G:
-		values.append(G.degree(node))
-	ave_deg = float(sum(values)) / float(N)
-	
-	for i in range(len(Con_sub)):
-		if nx.number_of_nodes(Con_sub[i])>1:
-			values_2.append(nx.average_shortest_path_length(Con_sub[i]))
-
-	if len(values_2)==0:
-		d = 0
-	else :
-		d = sum(values_2)/len(values_2)
-	
-	return d 
 
 for p in p_values:
 	C_max	   = np.append(C_max , clustering_ring(k))
 	C	 	   = np.append(C , clustering_rewiring(k,p))
 
 	G_ring   = ring_graph(N, k, seed=None)
-	d_temp   = get_single_network_measures(G_ring)
+	d_temp   = shortest_path(G_ring, k, p=0.00001)
 	d_max	 = np.append(d_max , d_temp)
 	
+	#L = nx.number_of_edges(G_ring)
+	#d_temp   = math.log10(L)/float(4*k)
+	#d_max = np.append(d_max , d_temp)
+
+	
 	G_rewired= rewiring_edges(G_ring , p)
-	d_tmp = get_single_network_measures(G_rewired)
+	d_tmp = shortest_path(G_rewired, k , p)
 	d_ave = np.append(d_ave , d_tmp)
+
 	
-	
-	
+
 
 
 C_to_plot = C/ C_max 
@@ -211,7 +202,7 @@ fig = pl.figure()
 ax  = fig.add_subplot(1,1,1)
 ax.set_xscale('log')
 pl.plot(p_values , D_to_plot)
-#pl.ylim( 0 ,1 )
+pl.ylim( 0 ,1 )
 #pl.xlim( ax.get_xlim() )
 pl.show()
 
