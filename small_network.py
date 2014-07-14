@@ -78,7 +78,7 @@ def rewiring_edges(G , p ) :
 							break
 					# swapping edges between paired nodes (rewiring) 		 
 					else:
-						G.remove_edge(node_j,node_k)
+						#G.remove_edge(node_j,node_k)
 						G.add_edge(node_j,node_X)
 						
 	# ensuring no self loops and no multiple edges
@@ -119,26 +119,55 @@ def clustering_rewiring(k , p):
 	cc = (3*k-3) / float( 4*k-2 + 4*k*p*(p+2)  )    ## Newman
 	return cc
 
-def f(x):
-	A = float(1)/(2*(math.sqrt( pow(x,2) + 2*x ) ) )     
-	B = math.atanh( math.sqrt( float(x) / (x+2) ) )
-	return A*B
+ADJ = {}
+triads ={}
+def degree_node(G,node_i):
+	# connected neigbors of a given node 
+	# returns a list
+	ADJ[node_i] = []
+	for j in G.nodes():		
+		if G.has_edge(j,node_i):			
+			ADJ[node_i].append(j)
+	return ADJ[node_i]
 
-def shortest_path(G , k, p):
-	L = nx.number_of_edges(G)
-	d_shortest = (float(L)/k) * f(L*k*p)
-	return d_shortest
-
-
-
-#print "YES : ", clustering_rewiring(k=2 , p =0.5)
+def triangle_node(G,nodes):
+	# number of triangles around a given node
+	# returns an integer	
 	
-#N = 10
-#k = 2
+	ADJ[nodes] = []
+	for j in G.nodes():
+		if G.has_edge(j,nodes):
+			ADJ[nodes].append(j) # list of neigbors	
+	
+	for node_i in ADJ:
+		triads[node_i] = []		 
+		adjacent_i= set(ADJ[node_i]) 
+		count_tri = 0
+		for node_j in adjacent_i:
+			new_set = set(G[node_j])-set([node_j])
+			count_tri +=len(adjacent_i.intersection(new_set))  		
+	return  int(count_tri/2)
+
+	
+
+def cluster_coef_numer(G):
+	# calculates average cluster coefficient of a graph
+	# Watts and Strogatz
+	clust_coef=0
+	N = nx.number_of_nodes(G)
+	for nodes in G:
+		k_i = len(degree_node(G,nodes))   # number of degrees
+		t_i = triangle_node(G,nodes)	  # number of triads	
+		clust_coef += 2 * float(t_i) /(k_i * (k_i - 1))
+	return clust_coef/float(N)
+
+
+N = 100
+k = 5
 #p = 0.1
-#G_1 = ring_graph(N, k, seed=None)
-#cc_ring = clustering_ring(k)
-#print "clustering coefficient of ring graph is : " , cc_ring
+G_1 = ring_graph(N, k, seed=None)
+cc_ring = clustering_ring(k)
+
 
 #G_2 = rewiring_edges(G_1, p)
 #cc_rewired = clustering_rewiring(k,p)
@@ -153,57 +182,51 @@ def shortest_path(G , k, p):
 #plot_graph(G_2)
 #plot_graph(G_3)
 
-N 		 = 100000
-k 		 = 10000
-C 		 = []
-C_max	 = []
+
 d_ave	 = []
 d_max	 = []
-p_values = np.arange(0.0001,1.0001,0.0001)
 
+p_values = np.arange(0.0001,1.0001,0.01)
+
+C_max_numer = np.zeros_like(p_values)
+C_max = np.zeros_like(p_values)
+
+C = []
+C_numer = []
+
+G_RING = ring_graph(N , k , seed = None)
+temp_a = clustering_ring(k)
+
+#temp_b = cluster_coef_numer(G_RING)
+temp_b = nx.average_clustering(G_RING)
+
+for i in range(0, len(p_values)):
+	C_max[i]       = temp_a
+	C_max_numer[i] = temp_b
 
 for p in p_values:
-	C_max	   = np.append(C_max , clustering_ring(k))
-	C	 	   = np.append(C , clustering_rewiring(k,p))
-
-	G_ring   = ring_graph(N, k, seed=None)
-	d_temp   = shortest_path(G_ring, k, p=0.00001)
-	d_max	 = np.append(d_max , d_temp)
-	
-	#L = nx.number_of_edges(G_ring)
-	#d_temp   = math.log10(L)/float(4*k)
-	#d_max = np.append(d_max , d_temp)
-
-	
-	G_rewired= rewiring_edges(G_ring , p)
-	d_tmp = shortest_path(G_rewired, k , p)
-	d_ave = np.append(d_ave , d_tmp)
-
-	
-
-
+	C	 	    = np.append(C , clustering_rewiring(k,p))
+	G_1 		= ring_graph(N, k, seed=None)
+	G_2 		= rewiring_edges(G_1, p)
+	C_numer     = np.append(C_numer, cluster_coef_numer(G_2))
+	#C_numer	    = np.append(C_numer, nx.average_clustering(G_2))
 
 C_to_plot = C/ C_max 
+C_numer_to_plot = C_numer/C_max_numer
 
-#fig = pl.figure()
-#ax  = fig.add_subplot(1,1,1)
-#ax.set_xscale('log')
-#pl.plot(p_values , C_to_plot)
-#pl.ylim( 0 ,1 )
-#pl.xlim( ax.get_xlim() )
-#pl.xlabel('p')
-#pl.ylabel('$C/C_{max}$')
-#pl.title('Clustering Coefficient Ration over Probability')
-#pl.show()
+print C_numer_to_plot	
 
-D_to_plot = d_ave / d_max
-
-fig = pl.figure()
+fig = pl.figure(1)
 ax  = fig.add_subplot(1,1,1)
 ax.set_xscale('log')
-pl.plot(p_values , D_to_plot)
-pl.ylim( 0 ,1 )
-#pl.xlim( ax.get_xlim() )
+pl.plot(p_values , C_to_plot)
+pl.plot(p_values, C_numer_to_plot, 'r')
+pl.ylim( 0 ,1.2 )
+pl.xlim( ax.get_xlim() )
+pl.xlabel('p')
+pl.ylabel('$C/C_{max}$')
+pl.title('Clustering Coefficient Ration over Probability')
+
 pl.show()
 
 
