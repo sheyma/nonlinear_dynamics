@@ -162,6 +162,27 @@ def cluster_coef_numer(G):
 	return clust_coef/float(N)
 
 
+def f(x):
+	# master function required for shortest path analytical solution
+    return 1.0/(2.0*math.sqrt(x*x + 2*x))*np.arctanh(math.sqrt(x/(x + 2.0))) 
+
+y=[]
+L = 600
+k = 4.0 
+#p = np.arange(0.0001,1.0001,0.01)
+p = np.array(np.logspace(0.0001,1.0,100)) 
+for i in range(0, len(p)):
+	y = np.append(y, f(L*k*p[i]))
+print y 
+
+fig = pl.figure(1)
+ax  = fig.add_subplot(1,1,1)
+#ax.set_xscale('log')
+pl.plot(p,L*y/k)
+#xscale('log') 
+pl.show()
+
+
 N = 100
 k = 5
 #p = 0.1
@@ -227,7 +248,7 @@ pl.xlabel('p')
 pl.ylabel('$C/C_{max}$')
 pl.title('Clustering Coefficient Ration over Probability')
 
-pl.show()
+#pl.show()
 
 
 
