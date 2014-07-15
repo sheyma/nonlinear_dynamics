@@ -148,6 +148,32 @@ def triangle_node(G,nodes):
 			count_tri +=len(adjacent_i.intersection(new_set))  		
 	return  int(count_tri/2)
 
+
+def path_node(G,node):
+	# finds path lengths of given node to all other nodes
+	# returns a dict, keys are other nodes, values distances
+	node_paths = {}                 
+	distance   = 0               
+	temp_nodes = {node:0} 		
+	while len(temp_nodes) != 0:
+		new_nodes  = temp_nodes  
+		temp_nodes = {}         
+		for v in new_nodes:
+			if v not in node_paths:
+				node_paths[v] = distance 
+				temp_nodes.update(G[v]) 	
+		distance=distance+1	
+	return node_paths
+
+def path_ave(G):
+	# returns average shortest pathway of G
+	N = nx.number_of_nodes(G)
+	summ = 0
+	for node_i in G:
+		for keys in path_node(G , node_i):
+			summ = summ + path_node(G, node_i)[keys]
+	return summ / float(N*(N-1))
+
 	
 
 def cluster_coef_numer(G):
