@@ -71,7 +71,7 @@ def rewiring_edges(G , p ) :
 					# choose method a : uncomment G.remove_edge...
 					# choose method b : comment G.remove_edge 		 
 					else:
-						G.remove_edge(node_j,node_k)
+						#G.remove_edge(node_j,node_k)
 						G.add_edge(node_j,node_X)
 						
 	# ensuring no self loops
@@ -104,9 +104,9 @@ def clustering_rewiring(k , p):
 	# calculates the clustering coefficient of rewired graph
 	# k : number of nearest neighbors of any node in ring graph
 	
-	cc = float(3*k-3) * pow((1-p),3) /float(4*k-2)
+	#cc = float(3*k-3) * pow((1-p),3) /float(4*k-2)
 	# [Barrat & Weigt, 2000] for rewiring (method a) 
-	#cc = (3*k-3) / float( 4*k-2 + 4*k*p*(p+2)  )
+	cc = (3*k-3) / float( 4*k-2 + 4*k*p*(p+2)  )
 	# [Newman, 2002] without rewiring (method b)
 	return cc
 
@@ -197,7 +197,7 @@ def plot_graph(G):
 	pl.show()
 
 N 		 = 100
-k 		 = 4
+k 		 = 5
 p_temp 	 = 0.5
 
 #G_1      = ring_graph(N, k) 		 # generate a ring graph
@@ -239,7 +239,7 @@ d0_numer = path_ave(G_ring)
 d0_analy = path_analy(L_ring, k , p=0.00001)
 
 
-p_values = np.arange(0.0001,1.0001,0.001)
+p_values = np.arange(0.0001,1.0001,0.01)
 
 
 for p in p_values:
@@ -266,10 +266,11 @@ fig = pl.figure(1)
 ax  = fig.add_subplot(1,1,1)
 ax.set_xscale('log')
 pl.plot(p_values,(d_sworld_numer)/d_ring_numer, 'r', label = 'd - numerical')
-pl.plot(p_values, d_sworld_analy/d_ring_analy, 'b' , label = 'd - analytical')
+pl.plot(p_values, d_sworld_analy/d_ring_analy, '.b' , label = 'd - analytical')
 pl.ylim( 0 ,1.2 )
 pl.xlim( ax.get_xlim() )
-pl.xlabel('probability of rewiring, p')
+#pl.xlabel('probability of rewiring, p')
+pl.xlabel('probability of adding edge, p')
 pl.ylabel('$d/d_{max}$')
 pl.title('N = ' +str(N)+  '   k = '+ str(k) ) 
 lg =pl.legend()
@@ -281,12 +282,13 @@ figu = pl.figure(2)
 ax  = figu.add_subplot(1,1,1)
 ax.set_xscale('log')
 pl.plot(p_values, C_sworld_numer/C_ring_numer, 'r', label = 'cc - numerical')
-pl.plot(p_values, C_sworld_analy/C_ring_analy, 'b', label = 'cc - analytical')
+pl.plot(p_values, C_sworld_analy/C_ring_analy, '.b', label = 'cc - analytical')
 pl.ylim( 0 ,1.2 )
 pl.xlim( ax.get_xlim() )
 pl.xlabel('p')
 pl.ylabel('$C/C_{max}$')
-pl.xlabel('probability of rewiring, p')
+#pl.xlabel('probability of rewiring, p')
+pl.xlabel('probability of adding edge, p')
 pl.title('N = ' +str(N)+  '   k = '+ str(k) )
 lg =pl.legend()
 lg.draw_frame(False)
