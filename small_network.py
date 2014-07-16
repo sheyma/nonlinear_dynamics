@@ -201,137 +201,105 @@ def plot_graph(G):
 y=[]
 L = 600
 k = 4.0 
-#p = np.arange(0.0001,1.0001,0.01)
-#p = np.array(np.logspace(0.0001,1.0,100)) 
-#for i in range(0, len(p)):
-	#y = np.append(y, f(L*k*p[i]))
-#print y 
-
-#fig = pl.figure(1)
-#ax  = fig.add_subplot(1,1,1)
-##ax.set_xscale('log')
-#pl.plot(p,L*y/k)
-##xscale('log') 
-#pl.show()
 
 
-N = 100
-k = 5
-#p = 0.1
-G_1 = ring_graph(N, k) #, seed=None)
-cc_ring = clustering_ring(k)
+N 		 = 100
+k 		 = 5
+p_temp 	 = 0.1
+G_1      = ring_graph(N, k) 		 # generate a ring graph
+cc_analy = clustering_ring(k)        # analytical clustering coefficient
+cc_numer = cluster_coef_numer(G_1)   # numerical clustering coefficient
 
+G_2     = rewiring_edges(G_1, p_temp)    # generate a small world graph
+G_2     = rewiring_edges_connected(G_1, p_temp, tries=100)
+cc_A    = clustering_rewiring(k,p_temp)  # analytical clustering coeff.
+cc_N    = cluster_coef_numer(G_2)        # numerical clustering coeff.
 
-#G_2 = rewiring_edges(G_1, p)
-#cc_rewired = clustering_rewiring(k,p)
-#print "clustering coefficient of rewired graph is : " , cc_rewired
-
-#G_3 = rewiring_edges_connected(G_1, p , tries=100)
-#cc_con = clustering_rewiring(k,p)
-#print "clustering coefficient of rewired connected graph is : " , cc_con
-
+###plotting graphs####
 
 #plot_graph(G_1)
 #plot_graph(G_2)
 #plot_graph(G_3)
 
+### <measure>_<graph_type>_<algorithm> ###
 
-d_sworld_numer	 = []
-d_ring_numer	 = []
+d_sworld_numer	 = []			
+d_ring_numer	 = []			
 
 d_ring_analy	 = []
 d_sworld_analy   = []
 
-G_ring      	 = ring_graph(N, k)
-L_ring			 = nx.number_of_edges(G_ring)
+C_ring_numer     = []  
+C_ring_analy     = []
+
+C_sworld_analy   = []
+C_sworld_numer   = []
+
+G_ring   = ring_graph(N, k)
+L_ring	 = nx.number_of_edges(G_ring)
+
+temp_a   = clustering_ring(k)
+temp_b   = cluster_coef_numer(G_ring)
 
 d0_numer = path_ave(G_ring)
-d0_analy = path_analy(L_ring, k , p=0.001)
+d0_analy = path_analy(L_ring, k , p=0.00001)
 
 
-p_values = np.arange(0.0001,1.0001,0.0001)
+p_values = np.arange(0.0001,1.0001,0.01)
 
 
 for p in p_values:
 	
-	G_sworld 				= rewiring_edges(G_ring, p)
-	L                       = nx.number_of_edges(G_sworld)
+	G_sworld 			= rewiring_edges(G_ring, p)
+	L                   = nx.number_of_edges(G_sworld)
 	
-	d_ring_numer	 	    = np.append(d_ring_numer , d0_numer)
-	d_sworld_numer			= np.append(d_sworld_numer, path_ave(G_sworld))
+	d_ring_analy        = np.append(d_ring_analy, d0_analy)
+	d_ring_numer	    = np.append(d_ring_numer, d0_numer)
+
+	d_sworld_analy 	    = np.append(d_sworld_analy, path_analy(L,k,p))	
+	d_sworld_numer		= np.append(d_sworld_numer, path_ave(G_sworld))
 	
-	d_sworld_analy 			= np.append(d_sworld_analy, path_analy(L,k,p))
-	d_ring_analy            = np.append(d_ring_analy, d0_analy)
+	C_ring_analy        = np.append(C_ring_analy ,temp_a)
+	C_ring_numer        = np.append(C_ring_numer, temp_b)
+
+	C_sworld_analy	 	= np.append(C_sworld_analy , clustering_rewiring(k,p))
+	C_sworld_numer      = np.append(C_sworld_numer, cluster_coef_numer(G_sworld))
+
+	
+
+	
+
+
 
 fig = pl.figure(num=None, figsize=(8, 6), dpi=100, facecolor='w', edgecolor='k')
-
 fig.suptitle('Average Shortest Pathway of Small Network ' , fontsize=14, fontweight='bold')
 
-
-#fig = pl.figure(1)
+fig = pl.figure(1)
 ax  = fig.add_subplot(1,1,1)
 ax.set_xscale('log')
-pl.plot(p_values,(d_sworld_numer)/d_ring_numer, 'r' , label = 'd - numerical')
-pl.plot(p_values, d_sworld_analy/d_ring_analy, '.b' , label = 'd - analytical')
+pl.plot(p_values,(d_sworld_numer)/d_ring_numer, 'r', label = 'd - numerical')
+pl.plot(p_values, d_sworld_analy/d_ring_analy, 'b' , label = 'd - analytical')
 pl.ylim( 0 ,1.2 )
 pl.xlim( ax.get_xlim() )
 pl.xlabel('probability of rewiring, p')
 pl.ylabel('$d/d_{max}$')
 pl.title('N = ' +str(N)+  '   k = '+ str(k) ) 
 lg = legend()
-#lg = legend(loc=2)
 lg.draw_frame(False)
-pl.show()
-
-
-C_max_numer = np.zeros_like(p_values)
-C_max = np.zeros_like(p_values)
-
-C = []
-C_numer = []
-
-
-
-##temp_b = cluster_coef_numer(G_RING)
-#temp_b = nx.average_clustering(G_RING)
-
-#for i in range(0, len(p_values)):
-	#C_max[i]       = temp_a
-	#C_max_numer[i] = temp_b
-
-#for p in p_values:
-	#C	 	    = np.append(C , clustering_rewiring(k,p))
-	#G_1 		= ring_graph(N, k, seed=None)
-	#G_2 		= rewiring_edges(G_1, p)
-	#C_numer     = np.append(C_numer, cluster_coef_numer(G_2))
-	##C_numer	    = np.append(C_numer, nx.average_clustering(G_2))
-
-#C_to_plot = C/ C_max 
-#C_numer_to_plot = C_numer/C_max_numer
-
-#print C_numer_to_plot	
-
-#fig = pl.figure(1)
-#ax  = fig.add_subplot(1,1,1)
-#ax.set_xscale('log')
-#pl.plot(p_values , C_to_plot)
-#pl.plot(p_values, C_numer_to_plot, 'r')
-#pl.ylim( 0 ,1.2 )
-#pl.xlim( ax.get_xlim() )
-#pl.xlabel('p')
-#pl.ylabel('$C/C_{max}$')
-#pl.title('Clustering Coefficient Ration over Probability')
-
 #pl.show()
 
+figu = pl.figure(num=None, figsize=(8, 6), dpi=100, facecolor='w', edgecolor='k')
+figu.suptitle('Average Clustering Coefficient of Small Network ' , fontsize=14, fontweight='bold')
 
+figu = pl.figure(2)
+ax  = figu.add_subplot(1,1,1)
+ax.set_xscale('log')
+pl.plot(p_values, C_sworld_numer/C_ring_numer, 'r', label = 'cc - numerical')
+pl.plot(p_values, C_sworld_analy/C_ring_analy, 'b', label = 'cc - analytical')
+pl.ylim( 0 ,1.2 )
+pl.xlim( ax.get_xlim() )
+pl.xlabel('p')
+pl.ylabel('$C/C_{max}$')
+pl.title('N = ' +str(N)+  '   k = '+ str(k) )
 
-
-
-
-#G_numerical =  nx.watts_strogatz_graph(10 , 2 , p=0.5 , seed=None)
-#length_1 = nx.single_source_shortest_path_length(G_numerical, source =1)
-#length_2 = nx.average_shortest_path_length(G_numerical)
-#print "d_{ij}_1 for i = 1 : ", sum(length_1.values()) / float(len(length_1.values()))
-#print "d_{ij}_2 for i = 1 : ", length_2  
-#plot_graph(G_numerical)
+pl.show()
